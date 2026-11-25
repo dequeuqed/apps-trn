@@ -1,5 +1,5 @@
 import { Controller, Get, ServiceUnavailableException } from '@nestjs/common';
-import { AppService, HealthResult } from './app.service.js';
+import { AppService, type HealthResult } from './app.service.js';
 
 @Controller()
 export class AppController {
