@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { CampaignsModule } from './campaigns/campaigns.module.js';
+import { createValidationPipe } from './common/validation.pipe.js';
 
 @Module({
   imports: [
@@ -22,6 +24,9 @@ import { CampaignsModule } from './campaigns/campaigns.module.js';
     CampaignsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_PIPE, useFactory: createValidationPipe },
+  ],
 })
 export class AppModule {}

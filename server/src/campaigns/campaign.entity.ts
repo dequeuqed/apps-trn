@@ -39,11 +39,13 @@ export class Campaign {
   @Column({ type: 'varchar', length: 32 })
   channel: string;
 
-  // Postgres bigint exceeds Number.MAX_SAFE_INTEGER, so the driver returns it as a string.
-  @Column({ name: 'budget_cents', type: 'bigint' })
-  budgetCents: string;
+  @Column({
+    name: 'budget_cents',
+    type: 'bigint',
+    transformer: { to: (v: number) => v, from: (v: string) => Number(v) },
+  })
+  budgetCents: number;
 
-  // `date` columns come back as 'YYYY-MM-DD' strings, with no timezone shift.
   @Column({ name: 'start_date', type: 'date' })
   startDate: string;
 
