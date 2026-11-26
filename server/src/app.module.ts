@@ -14,6 +14,7 @@ import { CampaignsModule } from './campaigns/campaigns.module.js';
         type: 'postgres',
         url: config.getOrThrow<string>('DATABASE_URL'),
         uuidExtension: 'pgcrypto',
+        installExtensions: false,
         autoLoadEntities: true,
         synchronize: false,
       }),

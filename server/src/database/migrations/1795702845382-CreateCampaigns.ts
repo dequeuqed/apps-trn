@@ -14,13 +14,15 @@ export class CreateCampaigns1795702845382 implements MigrationInterface {
         budget_cents  bigint        NOT NULL,
         start_date    date          NOT NULL,
         end_date      date          NOT NULL,
-        status        varchar(32)   NOT NULL,
+        status        varchar(32)   NOT NULL DEFAULT 'draft',
         version       integer       NOT NULL,
         created_at    timestamptz   NOT NULL DEFAULT now(),
         updated_at    timestamptz   NOT NULL DEFAULT now(),
 
         CONSTRAINT pk_campaigns PRIMARY KEY (id),
-        CONSTRAINT chk_campaigns_end_after_start CHECK (end_date >= start_date)
+        CONSTRAINT chk_campaigns_end_after_start CHECK (end_date >= start_date),
+        CONSTRAINT chk_campaigns_status CHECK (status IN ('draft', 'active', 'completed', 'archived')),
+        CONSTRAINT chk_campaigns_budget_non_negative CHECK (budget_cents >= 0)
       )
     `);
 

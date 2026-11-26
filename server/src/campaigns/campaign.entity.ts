@@ -9,6 +9,8 @@ import {
   VersionColumn,
 } from 'typeorm';
 
+export type CampaignStatus = 'draft' | 'active' | 'completed' | 'archived';
+
 @Entity({ name: 'campaigns' })
 @Index('idx_campaigns_region_status_start', [
   'regionCode',
@@ -16,6 +18,11 @@ import {
   'startDate',
 ])
 @Check('chk_campaigns_end_after_start', '"end_date" >= "start_date"')
+@Check(
+  'chk_campaigns_status',
+  `"status" IN ('draft', 'active', 'completed', 'archived')`,
+)
+@Check('chk_campaigns_budget_non_negative', '"budget_cents" >= 0')
 export class Campaign {
   @PrimaryGeneratedColumn('uuid', { primaryKeyConstraintName: 'pk_campaigns' })
   id: string;
@@ -43,8 +50,8 @@ export class Campaign {
   @Column({ name: 'end_date', type: 'date' })
   endDate: string;
 
-  @Column({ type: 'varchar', length: 32 })
-  status: string;
+  @Column({ type: 'varchar', length: 32, default: 'draft' })
+  status: CampaignStatus;
 
   @VersionColumn({ type: 'integer' })
   version: number;

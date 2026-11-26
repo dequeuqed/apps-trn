@@ -13,6 +13,7 @@ export default new DataSource({
   type: 'postgres',
   url,
   uuidExtension: 'pgcrypto',
+  installExtensions: false,
   synchronize: false,
   entities: [join(distRoot, '**', '*.entity.js')],
   migrations: [join(distRoot, 'database', 'migrations', '*.js')],
