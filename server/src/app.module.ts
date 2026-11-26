@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
+import { CampaignsModule } from './campaigns/campaigns.module.js';
 
 @Module({
   imports: [
@@ -12,10 +13,12 @@ import { AppService } from './app.service.js';
       useFactory: (config: ConfigService) => ({
         type: 'postgres',
         url: config.getOrThrow<string>('DATABASE_URL'),
+        uuidExtension: 'pgcrypto',
         autoLoadEntities: true,
         synchronize: false,
       }),
     }),
+    CampaignsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
