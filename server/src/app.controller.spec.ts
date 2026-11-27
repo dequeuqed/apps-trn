@@ -1,49 +1,38 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { Logger, ServiceUnavailableException } from '@nestjs/common';
-import { DataSource } from 'typeorm';
+import { ServiceUnavailableException } from '@nestjs/common';
+import { Test } from '@nestjs/testing';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 
 describe('AppController', () => {
-  let appController: AppController;
-  const dataSource = { query: vi.fn() };
+  let controller: AppController;
+  const appService = { getHealth: vi.fn() };
 
   beforeEach(async () => {
-    dataSource.query.mockReset();
-
-    const app: TestingModule = await Test.createTestingModule({
+    appService.getHealth.mockReset();
+    const moduleRef = await Test.createTestingModule({
       controllers: [AppController],
-      providers: [AppService, { provide: DataSource, useValue: dataSource }],
+      providers: [{ provide: AppService, useValue: appService }],
     }).compile();
-
-    appController = app.get<AppController>(AppController);
+    controller = moduleRef.get(AppController);
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  it('returns health when the database is up', async () => {
+    appService.getHealth.mockResolvedValue({ status: 'ok', db: 'up' });
 
-  describe('health', () => {
-    it('returns ok when the database responds', async () => {
-      dataSource.query.mockResolvedValue([{ '?column?': 1 }]);
-
-      await expect(appController.health()).resolves.toStrictEqual({
-        status: 'ok',
-        db: 'up',
-      });
-      expect(dataSource.query).toHaveBeenCalledWith('SELECT 1');
+    await expect(controller.health()).resolves.toStrictEqual({
+      status: 'ok',
+      db: 'up',
     });
+  });
 
-    it('throws 503 when the database query fails', async () => {
-      vi.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
-      dataSource.query.mockRejectedValue(new Error('connection refused'));
+  it('throws 503 when the database is down', async () => {
+    appService.getHealth.mockResolvedValue({ status: 'error', db: 'down' });
 
-      const result = appController.health();
+    const result = controller.health();
 
-      await expect(result).rejects.toBeInstanceOf(ServiceUnavailableException);
-      await expect(result).rejects.toMatchObject({
-        response: { status: 'error' },
-      });
+    await expect(result).rejects.toBeInstanceOf(ServiceUnavailableException);
+    await expect(result).rejects.toMatchObject({
+      response: { status: 'error' },
     });
   });
 });

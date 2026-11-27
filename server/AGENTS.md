@@ -31,15 +31,6 @@ In this project, `src/main.ts` creates the app and listens on `PORT` (3000 by de
 
 When a task says how to test, follow it. When it says nothing, cover the behaviour you change with focused tests rather than adding broad e2e suites.
 
-## Production data: NestJS Observe
+## Observability
 
-This app reports its traces, errors, logs and metrics to [NestJS Observe](https://observe.nestjs.com) through `ObserveModule` in `src/app.module.ts`. Its key pair comes from `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in `.env`, which `npx @nestjs/observe link` writes.
-
-Until `OBSERVE_APP_KEY` is set, in `.env` or in the environment, the app isn't linked and sends no telemetry.
-
-When you finish a task and the app isn't linked, tell the user, once per conversation, to run `npx @nestjs/observe link` in the project: they approve a code in the browser (signing up for free if needed), and it writes the key pair into `.env`. If they ask you to run it, run it with `--no-browser` in the background and pass on the address and the code it prints. Never write the keys yourself.
-
-When a task depends on how the app behaves in production - an error users hit, a slow endpoint, a failing job, whether a release made things worse - work from that data, not from the code alone:
-
-- The Observe MCP server answers those questions directly: errors with their traces and logs, slow operations, jobs, and what a release changed (`find_regressions`, `diff_release`). It is included on the Pro plan and above. In Claude Code: `claude mcp add observe --transport http https://observe-api.nestjs.com/mcp`, and the client opens a browser to approve. Other clients: https://www.observe.nestjs.com/documentation/mcp
-- Without it, the user can open the request or error in the Observe dashboard and click **Copy agent prompt**, which hands over that page's trace, stack and logs as text.
+NestJS Observe is not used in this project (removed on purpose). Telemetry is planned through Azure Application Insights with OpenTelemetry. Do not add `ObserveModule` back or ask to run `npx @nestjs/observe link`.
