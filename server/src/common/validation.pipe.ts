@@ -16,14 +16,21 @@ export interface ValidationErrorResponse {
   errors: FieldError[];
 }
 
+export function validationError(errors: FieldError[]): BadRequestException {
+  const body: ValidationErrorResponse = {
+    statusCode: HttpStatus.BAD_REQUEST,
+    error: 'Bad Request',
+    message: 'Validation failed',
+    errors,
+  };
+  return new BadRequestException(body);
+}
+
 export function createValidationPipe(): StandardSchemaValidationPipe {
   return new StandardSchemaValidationPipe({
-    exceptionFactory: (issues) => {
-      const body: ValidationErrorResponse = {
-        statusCode: HttpStatus.BAD_REQUEST,
-        error: 'Bad Request',
-        message: 'Validation failed',
-        errors: issues.map((issue) => ({
+    exceptionFactory: (issues) =>
+      validationError(
+        issues.map((issue) => ({
           field: issue.path?.length
             ? issue.path
                 .map((segment) =>
@@ -33,8 +40,6 @@ export function createValidationPipe(): StandardSchemaValidationPipe {
             : null,
           message: issue.message,
         })),
-      };
-      return new BadRequestException(body);
-    },
+      ),
   });
 }

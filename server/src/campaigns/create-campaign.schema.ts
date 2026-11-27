@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-const campaignFields = z.strictObject({
+export const END_BEFORE_START_MESSAGE = 'Must be on or after startDate';
+
+export const campaignFields = z.strictObject({
   name: z.string().trim().min(1).max(255),
   supplier: z.string().trim().min(1).max(255),
   regionCode: z.string().trim().min(1).max(16),
@@ -18,7 +20,7 @@ const dateRange = z.object({
 export const createCampaignSchema = campaignFields.refine(
   (campaign) => campaign.endDate >= campaign.startDate,
   {
-    message: 'Must be on or after startDate',
+    message: END_BEFORE_START_MESSAGE,
     path: ['endDate'],
     when: (payload) => dateRange.safeParse(payload.value).success,
   },
