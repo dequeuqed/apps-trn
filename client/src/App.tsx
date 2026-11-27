@@ -1,12 +1,5 @@
-import { useEffect, useState } from 'react';
+import { CampaignsPage } from './campaigns/CampaignsPage.tsx';
 
 export default function App() {
-  const [status, setStatus] = useState('loading...');
-  useEffect(() => {
-    fetch('/api/health')
-      .then((r) => r.json())
-      .then((d) => setStatus(d.status))
-      .catch(() => setStatus('error'));
-  }, []);
-  return <h1>API: {status}</h1>;
+  return <CampaignsPage />;
 }
