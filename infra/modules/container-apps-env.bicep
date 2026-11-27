@@ -2,6 +2,8 @@ param name string
 param location string
 param tags object
 param logAnalyticsWorkspaceName string
+@description('Subnet for the environment. Cannot be changed after the environment is created.')
+param infrastructureSubnetId string
 
 // Reference the existing workspace to read its key here,
 // instead of passing a secret through module outputs.
@@ -20,6 +22,10 @@ resource environment 'Microsoft.App/managedEnvironments@2024-03-01' = {
         customerId: workspace.properties.customerId
         sharedKey: workspace.listKeys().primarySharedKey
       }
+    }
+    vnetConfiguration: {
+      infrastructureSubnetId: infrastructureSubnetId
+      internal: false
     }
     workloadProfiles: [
       {
