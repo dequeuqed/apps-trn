@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Get, Param, Patch, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Get,
+  Param,
+  Patch,
+  Query,
+} from '@nestjs/common';
 import { Campaign } from './campaign.entity.js';
 import { CampaignsService, type CampaignPage } from './campaigns.service.js';
 import {
