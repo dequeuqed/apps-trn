@@ -9,7 +9,14 @@ import {
   VersionColumn,
 } from 'typeorm';
 
-export type CampaignStatus = 'draft' | 'active' | 'completed' | 'archived';
+export const CAMPAIGN_STATUSES = [
+  'draft',
+  'active',
+  'completed',
+  'archived',
+] as const;
+
+export type CampaignStatus = (typeof CAMPAIGN_STATUSES)[number];
 
 @Entity({ name: 'campaigns' })
 @Index('idx_campaigns_region_status_start', [
